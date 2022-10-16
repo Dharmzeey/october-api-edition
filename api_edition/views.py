@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
-from rest_framework.views import APIView
 from django.views.generic import CreateView
+from django.contrib import messages
+from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from .models import Advocate, Company
@@ -23,7 +24,7 @@ class AddAdvocate(LoginRequiredMixin, CreateView):
     form.save()
     form.instance.url = self.request.build_absolute_uri(reverse('advocate_details', args=(form.instance.id, )))
     form.save()
-    print(form.instance.url)
+    messages.info(self.request, "Advocate Added Successfully")
     return super().form_valid(form)
 add_advocate = AddAdvocate.as_view()
 
@@ -36,7 +37,7 @@ class AddCompany(LoginRequiredMixin, CreateView):
     form.save()
     form.instance.url = self.request.build_absolute_uri(reverse('company_details', args=(form.instance.id, )))
     form.save()
-    print(form.instance.url)
+    messages.info(self.request, "Company Added Successfully")
     return super().form_valid(form)
 add_company = AddCompany.as_view()
 

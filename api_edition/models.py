@@ -38,7 +38,7 @@ class Company(models.Model):
   logo = models.ImageField(upload_to="companies", default="avatar.png")
   summary = models.TextField(blank=False, null=False)
   url = models.CharField(max_length=50, null=True, blank=True)
-  advocates = models.ManyToManyField(Advocate, related_name="companies_advocates")
+  advocates = models.ManyToManyField(Advocate, related_name="companies_advocates", blank=True)
   
   youtube = models.URLField(null=True, blank=True)
   twitter = models.URLField(null=True, blank=True)

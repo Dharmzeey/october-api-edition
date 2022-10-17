@@ -1,3 +1,4 @@
 development.py
 __pycache__
 uploads/
+*.sqlite3

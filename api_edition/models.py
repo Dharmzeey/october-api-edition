@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Advocate(models.Model):
+  username = models.CharField(max_length=100, unique=True)
   name = models.CharField(max_length=50, null=False, blank=False)
   profile_pic = models.ImageField(upload_to="advocates", default="avatar.png")
   short_bio = models.CharField(max_length=250, null=False, blank=False)
@@ -13,7 +14,7 @@ class Advocate(models.Model):
   github = models.URLField(null=True, blank=True)
   linkedin = models.URLField(null=True, blank=True)
   website = models.URLField(null=True, blank=True)
-  url = models.CharField(max_length=200, null=True, blank=True)
+  # url = models.CharField(max_length=200, null=True, blank=True)
 
   def __str__(self):
     return self.name
@@ -37,7 +38,7 @@ class Company(models.Model):
   name = models.CharField(max_length=50, null=False, blank=False)
   logo = models.ImageField(upload_to="companies", default="avatar.png")
   summary = models.TextField(blank=False, null=False)
-  url = models.CharField(max_length=200, null=True, blank=True)
+  # url = models.CharField(max_length=200, null=True, blank=True)
   advocates = models.ManyToManyField(Advocate, related_name="companies_advocates", blank=True)
   
   youtube = models.URLField(null=True, blank=True)

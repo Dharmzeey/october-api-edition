@@ -38,9 +38,9 @@ class ListAdvocates(generics.ListAPIView):
 
   def list(self, request, *args, **kwargs):
     queryset = self.filter_queryset(self.get_queryset())
-    q = request.GET.get("q")
-    if q is not None:
-      queryset = Advocate.objects.filter(Q(name__icontains=q))
+    query = request.GET.get("query")
+    if query is not None:
+      queryset = Advocate.objects.filter(Q(name__icontains=query) | Q(username=query))
     page = self.paginate_queryset(queryset)
     if page is not None:
       serializer = self.get_serializer(page, many=True)
@@ -57,9 +57,9 @@ class ListCompanies(generics.ListAPIView):
   
   def list(self, request, *args, **kwargs):
     queryset = self.filter_queryset(self.get_queryset())
-    q = request.GET.get("q")
-    if q is not None:
-      queryset = Company.objects.filter(Q(name__icontains=q))
+    query = request.GET.get("query")
+    if query is not None:
+      queryset = Company.objects.filter(Q(name__icontains=query))
     page = self.paginate_queryset(queryset)
     if page is not None:
       serializer = self.get_serializer(page, many=True)
@@ -76,9 +76,17 @@ class DetailAdvocate(generics.RetrieveAPIView):
   lookup_field = 'pk'
 advocate_details = DetailAdvocate.as_view()
 
+# THIS FETCHES THE USERNAME WHEN IT IS SEARCHED
+class FetchAdvocate(generics.RetrieveAPIView):
+  queryset = Advocate.objects.all()
+  serializer_class = AdvocateSerializer
+  lookup_field = 'username'
+fetch_advocate = FetchAdvocate.as_view()
+
 
 class DetailCompany(generics.RetrieveAPIView):
   queryset = Company.objects.all()
   serializer_class = CompanySerializer
   lookup_field = 'pk'
 company_details = DetailCompany.as_view()
+ 

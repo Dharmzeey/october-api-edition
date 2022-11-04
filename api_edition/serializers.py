@@ -28,4 +28,4 @@ class AdvocateSerializer(serializers.ModelSerializer):
   )
   class Meta:
     model = Advocate
-    fields = [ 'id', 'name', 'profile_pic', 'short_bio', 'long_bio', 'advocate_years_exp', 'url', 'links', 'company']
+    fields = [ 'id', 'name', 'username', 'profile_pic', 'short_bio', 'long_bio', 'advocate_years_exp', 'url', 'links', 'company']

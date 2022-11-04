@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib import messages
 from django.db.models import Q
@@ -21,14 +21,14 @@ class AddAdvocate(LoginRequiredMixin, CreateView):
   model = Advocate
   template_name = 'api_edition/add_advocate.html'
   fields = ["name", "profile_pic", "short_bio", "long_bio","advocate_years_exp", "company", "youtube", "twitter", "github", "linkedin", "website"]
-  success_url = 'add-advocate'
+  success_url = reverse_lazy('add_advocate')
 add_advocate = AddAdvocate.as_view()
 
 class AddCompany(LoginRequiredMixin, CreateView):
   model = Company
   template_name = 'api_edition/add_advocate.html'
   fields = ["name", "logo", "summary", "advocates", "youtube", "twitter", "github", "linkedin", "website"]
-  success_url = 'add-company'
+  success_url = reverse_lazy('add_company')
 add_company = AddCompany.as_view()
 
 
@@ -46,7 +46,7 @@ class ListAdvocates(generics.ListAPIView):
       serializer = self.get_serializer(page, many=True)
       return self.get_paginated_response(serializer.data)
 
-    serializer = self.get_serializer(queryset, many=True)
+    serializer = self.get_serializer(queryset, many=True, context={'request': request})
     return Response(serializer.data)
 list_advocates = ListAdvocates.as_view()
 
@@ -58,7 +58,6 @@ class ListCompanies(generics.ListAPIView):
   def list(self, request, *args, **kwargs):
     queryset = self.filter_queryset(self.get_queryset())
     q = request.GET.get("q")
-    print(q)
     if q is not None:
       queryset = Company.objects.filter(Q(name__icontains=q))
     page = self.paginate_queryset(queryset)
@@ -66,7 +65,7 @@ class ListCompanies(generics.ListAPIView):
       serializer = self.get_serializer(page, many=True)
       return self.get_paginated_response(serializer.data)
 
-    serializer = self.get_serializer(queryset, many=True)
+    serializer = self.get_serializer(queryset, many=True, context={'request': request})
     return Response(serializer.data)
 list_companies = ListCompanies.as_view()
 
@@ -83,24 +82,3 @@ class DetailCompany(generics.RetrieveAPIView):
   serializer_class = CompanySerializer
   lookup_field = 'pk'
 company_details = DetailCompany.as_view()
-
-
-# class SearchAdvocate(APIView):
-#   def get(self, request):
-#     q = request.GET.get("q")
-#     if q is not None:
-#       result = Advocate.objects.filter(Q(name__icontains = q))
-#     else:
-#       result = Advocate.objects.all()
-#     serialized = AdvocateSerializer(result, many=True)
-#     return Response({"Search Result": serialized.data})
-# search_advocate = SearchAdvocate.as_view()
-  
-# class SearchCompany(APIView):
-#   def get(self, request):
-#     q = request.GET.get("q")
-#     if q is not None:
-#       result = Company.objects.filter(Q(name__icontains = q))
-#       serialized = CompanySerializer(result, many=True)
-#     return Response({"Search Result": serialized.data})
-# search_company = SearchCompany.as_view()

@@ -15,6 +15,9 @@ class Advocate(models.Model):
   linkedin = models.URLField(null=True, blank=True)
   website = models.URLField(null=True, blank=True)
   # url = models.CharField(max_length=200, null=True, blank=True)
+  
+  class Meta:
+    ordering = ["id"]
 
   def __str__(self):
     return self.name
@@ -46,6 +49,9 @@ class Company(models.Model):
   github = models.URLField(null=True, blank=True)
   linkedin = models.URLField(null=True, blank=True)
   website = models.URLField(null=True, blank=True)
+  
+  class Meta:
+    ordering = ["id"]
   
 
   def __str__(self):

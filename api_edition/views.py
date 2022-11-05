@@ -3,11 +3,16 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib import messages
 from django.db.models import Q
+from rest_framework.permissions import BasePermission
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from .models import Advocate, Company
 from .serializers import AdvocateSerializer, CompanySerializer
+
+class ReadOnly(BasePermission):
+  def has_permission(self, request, view):
+    return request.method in ["GET"]
 
 class APIEndpoints(APIView):
   def get(self, request):
@@ -16,7 +21,7 @@ class APIEndpoints(APIView):
     return Response({"Companies": companies, "Advocates": advocates})
 home = APIEndpoints.as_view()
 
-# THIS NEXT TWO CLASSES ARE FOR FRONTEND PURPOSE
+# THIS NEXT TWO CLASSES ARE FOR FRONTEND PURPOSE FOR ADDING ADVOCATES OR COMPANY THROUGH HTML
 class AddAdvocate(LoginRequiredMixin, CreateView):
   model = Advocate
   template_name = 'api_edition/add_advocate.html'
@@ -35,12 +40,13 @@ add_company = AddCompany.as_view()
 class ListAdvocates(generics.ListAPIView):
   queryset = Advocate.objects.all()
   serializer_class = AdvocateSerializer
+  permission_classes = [ReadOnly]
 
   def list(self, request, *args, **kwargs):
     queryset = self.filter_queryset(self.get_queryset())
     query = request.GET.get("query")
     if query is not None:
-      queryset = Advocate.objects.filter(Q(name__icontains=query) | Q(username=query))
+      queryset = Advocate.objects.filter(Q(name__icontains=query) | Q(username__icontains=query))
     page = self.paginate_queryset(queryset)
     if page is not None:
       serializer = self.get_serializer(page, many=True)
@@ -54,6 +60,7 @@ list_advocates = ListAdvocates.as_view()
 class ListCompanies(generics.ListAPIView):
   queryset = Company.objects.all()
   serializer_class = CompanySerializer
+  permission_classes = [ReadOnly]
   
   def list(self, request, *args, **kwargs):
     queryset = self.filter_queryset(self.get_queryset())
@@ -74,13 +81,15 @@ class DetailAdvocate(generics.RetrieveAPIView):
   queryset = Advocate.objects.all()
   serializer_class = AdvocateSerializer
   lookup_field = 'pk'
+  permission_classes = [ReadOnly]
 advocate_details = DetailAdvocate.as_view()
 
-# THIS FETCHES THE USERNAME WHEN IT IS SEARCHED
+# THIS FETCHES THE USERNAME WHEN IT IS SEARCHED USING ADVOCATE/USERNAME
 class FetchAdvocate(generics.RetrieveAPIView):
   queryset = Advocate.objects.all()
   serializer_class = AdvocateSerializer
   lookup_field = 'username'
+  permission_classes = [ReadOnly]
 fetch_advocate = FetchAdvocate.as_view()
 
 
@@ -88,5 +97,6 @@ class DetailCompany(generics.RetrieveAPIView):
   queryset = Company.objects.all()
   serializer_class = CompanySerializer
   lookup_field = 'pk'
+  permission_classes = [ReadOnly]
 company_details = DetailCompany.as_view()
  

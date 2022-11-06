@@ -7,17 +7,12 @@ class CompanySerializer(serializers.ModelSerializer):
     view_name='company_details',
     lookup_field='pk'
   )
+  # advocates = serializers.PrimaryKeyRelatedField(source='advocate_of_a_company', many=True, read_only=True)
   class Meta:
     model = Company
     fields = ['id', 'name', 'logo', 'summary', 'url', 'links']
     depth = 1
-    
-    
-# class CompanyFilterSerializer(serializers.ModelSerializer):  
-#   class Meta:
-#     model = Company
-#     fields = ['id', 'name', 'logo', 'url', 'summary']
-   
+      
 
 class AdvocateSerializer(serializers.ModelSerializer):
   company = CompanySerializer()
